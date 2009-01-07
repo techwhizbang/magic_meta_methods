@@ -1,0 +1,62 @@
+= magic_meta_methods
+  
+== Instructions
+
+A plugin to generate many methods or "attributes" on ActiveRecord that
+persists data into a serialized text based column as defined by :column. This
+plugin is particularly useful for storing display data or meta data that isn't intended to be queried
+directly via SQL. It reduces the number of "one-off" columns and the clutter of serialized declarations
+with getter/setters on your model.
+
+== Installation
+
+  ruby script/plugin install git://github.com/techwhizbang/magic_meta_methods.git
+
+== Usage
+
+=== Prepare database
+
+Add this migration to the desired table(s):
+
+  class MagicMetaMethods < ActiveRecord::Migration
+    def self.up
+      add_column :your_table_here, :magic_meta_methods, :mediumtext
+    end
+
+    def self.down
+      remove_column :your_table_here, :magic_meta_methods
+    end
+  end
+
+  rake db:migrate
+
+=== Meta Magic Methods in action
+
+Let's suppose your model needs to store a variety of data and types
+
+  class YourModel < ActiveRecord::Base
+    magic_meta_methods([:a_string,
+                       [:a_hash, :hash],
+                       [:hours, :array],
+                       [:cats, :indifferent_hash]], :column => 'alternate_meta')
+  end
+  
+We can now use the magic meta methods just like a regular attribute setter
+
+  m = YourModel.new
+  m.newsletter_signup = "yes"
+  m.random_stuff = {:a => 1, :b => 2, :c => 3}
+  m.hours_operation = [["Monday", "9-5"], ["Tuesday", "9-5"], ["Wed", "Closed"]]
+  m.pets = {:sparky => "dog", :pinky => "cat"}
+  m.save
+  
+You can retrieve the values
+
+  p.pets['sparky']
+  p.random_stuff[:a]
+  p.newsletter_signup
+
+=== Other
+
+Problems, comments, and suggestions all welcome. nick@controlaltcreate.com or visit my blog
+http://techwhizbang.com
