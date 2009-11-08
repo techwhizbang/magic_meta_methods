@@ -32,31 +32,33 @@ Add this migration to the desired table(s):
 
 === Meta Magic Methods in action
 
-Let's suppose your model needs to store a variety of data and types
+Let's suppose your model needs to store a variety of data and types, but
+these values don't need to be queried on, many times these values are purely
+for display or front end purposes.
 
   class YourModel < ActiveRecord::Base
-    magic_meta_methods([:a_string,
-                       [:a_hash, :hash],
-                       [:hours, :array],
-                       [:cats, :indifferent_hash]], :column => 'alternate_meta')
+    magic_meta_methods([:abstract,
+                       [:some_hash, :hash],
+                       [:some_array, :array],
+                       [:some_indifferent_hash, :indifferent_hash]], :column => 'alternate_meta')
   end
   
 We can now use the magic meta methods just like a regular attribute setter
 
   m = YourModel.new
-  m.newsletter_signup = "yes"
-  m.random_stuff = {:a => 1, :b => 2, :c => 3}
-  m.hours_operation = [["Monday", "9-5"], ["Tuesday", "9-5"], ["Wed", "Closed"]]
-  m.pets = {:sparky => "dog", :pinky => "cat"}
+  m.abstract= "This is a brief synopsis of magic meta methods"
+  m.some_hash = {:a => 1, :b => 2, :c => 3}
+  m.some_array = [["Monday", "9-5"], ["Tuesday", "9-5"], ["Wed", "Closed"]]
+  m.some_indifferent_hash = {:dog => "Fido", :cat => "Garfield"}
   m.save
   
 You can retrieve the values
 
-  p.pets['sparky']
-  p.random_stuff[:a]
-  p.newsletter_signup
+  m.some_indifferent_hash['dog'] #Fido
+  m.abstract #This is a brief synopsis of magic meta methods
+  m.some_array[0] #["Monday", "9-5"]
 
 === Other
 
-Problems, comments, and suggestions all welcome. nick@controlaltcreate.com or visit my blog
+Problems, comments, and suggestions all welcome. techwhizbang [at] gmail dot com or visit my blog
 http://techwhizbang.com
